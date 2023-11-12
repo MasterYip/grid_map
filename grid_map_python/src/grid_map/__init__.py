@@ -1,4 +1,5 @@
 from grid_map_python import GridMapBinding
+from grid_map_python import SignedDistanceFieldBinding
 from .convert import from_msg, to_msg
 
 class GridMap(GridMapBinding):
@@ -14,3 +15,11 @@ class GridMap(GridMapBinding):
 
 	def to_msg(self):
 		return to_msg(self)
+
+class SignedDistanceField(SignedDistanceFieldBinding):
+    
+	def __repr__(self):
+		return f'<{self.size()[0]:.2f}x{self.size()[1]:.2f}x{self.size()[2]:.2f} sdf>'
+
+	def derivative(self, position):
+		return self.valueAndDerivative(position)[1]

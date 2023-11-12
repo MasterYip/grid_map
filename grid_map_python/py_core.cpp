@@ -1,5 +1,5 @@
 #include <grid_map_core/GridMap.hpp>
-
+#include <grid_map_sdf/SignedDistanceField.hpp>
 // Python binding
 #include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
@@ -7,11 +7,16 @@
 
 namespace py = pybind11;
 using grid_map::GridMap;
-using grid_map::Position;
+using grid_map::Matrix;
 using grid_map::Index;
-using grid_map::Length;
-using grid_map::Time;
 using grid_map::InterpolationMethods;
+using grid_map::Length;
+using grid_map::Position;
+using grid_map::Position3;
+// using Derivative3 = Eigen::Vector3d;
+using grid_map::Time;
+// grid_map_sdf
+using grid_map::SignedDistanceField;
 constexpr static auto pyref = py::return_value_policy::reference_internal;
 
 void init_core(py::module m) {
@@ -23,6 +28,18 @@ void init_core(py::module m) {
     .value("INTER_CUBIC_CONVOLUTION", InterpolationMethods::INTER_CUBIC_CONVOLUTION)
     .value("INTER_CUBIC", InterpolationMethods::INTER_CUBIC)
     .export_values();
+
+  py::class_<SignedDistanceField, std::shared_ptr<SignedDistanceField>>(core, "SignedDistanceFieldBinding")
+    .def(py::init<const GridMap &, const std::string &, double, double>())
+    .def("value",             &SignedDistanceField::value, py::arg("position"))
+    // FIXME: This report an error: "no match for call"
+    // .def("derivative",        static_cast<Derivative3 (SignedDistanceField::*)(const Position3 &)>(&SignedDistanceField::derivative), py::arg("position"))
+    // .def("derivative",        py::overload_cast<const Position3&>(&SignedDistanceField::derivative), py::arg("position"))
+    // .def("derivative",        &SignedDistanceField::derivative, py::arg("position"))
+    .def("valueAndDerivative",&SignedDistanceField::valueAndDerivative, py::arg("position"))
+    .def("size",              &SignedDistanceField::size)
+    .def("getFrameId",        &SignedDistanceField::getFrameId)
+    .def("getTime",           &SignedDistanceField::getTime);
 
   py::class_<GridMap, std::shared_ptr<GridMap>>(core, "GridMapBinding")
     // Constructors (copy handled below and destruction is done by pybind11 itself)

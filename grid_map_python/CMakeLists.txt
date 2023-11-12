@@ -4,7 +4,11 @@ project(grid_map_python)
 set(CMAKE_CXX_STANDARD 14)
 add_compile_options(-O2 -Wall -Wextra -Wpedantic)
 
-find_package(catkin REQUIRED COMPONENTS pybind11_catkin grid_map_core grid_map_msgs)
+find_package(catkin REQUIRED COMPONENTS 
+  pybind11_catkin
+  grid_map_core
+  grid_map_msgs
+  grid_map_sdf)
 find_package(Eigen3 REQUIRED)
 include_directories(
   ${catkin_INCLUDE_DIRS}
